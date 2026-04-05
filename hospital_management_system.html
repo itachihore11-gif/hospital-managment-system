@@ -1,0 +1,627 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --red: #E24B4A; --red-light: #FCEBEB; --red-dark: #501313;
+    --blue: #378ADD; --blue-light: #E6F1FB; --blue-dark: #042C53;
+    --green: #639922; --green-light: #EAF3DE; --green-dark: #173404;
+    --amber: #BA7517; --amber-light: #FAEEDA; --amber-dark: #412402;
+    --teal: #1D9E75; --teal-light: #E1F5EE; --teal-dark: #04342C;
+    --gray: #888780; --gray-light: #F1EFE8; --gray-dark: #2C2C2A;
+    --purple: #7F77DD; --purple-light: #EEEDFE; --purple-dark: #26215C;
+  }
+
+  body { font-family: 'DM Sans', var(--font-sans); background: transparent; color: var(--color-text-primary); }
+
+  .app { min-height: 600px; padding: 0; }
+
+  .header {
+    background: var(--color-background-primary);
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    padding: 1rem 1.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .header-left { display: flex; align-items: center; gap: 12px; }
+
+  .logo {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: var(--red); display: flex; align-items: center; justify-content: center;
+  }
+
+  .logo svg { width: 18px; height: 18px; fill: white; }
+
+  .header h1 { font-size: 16px; font-weight: 500; }
+  .header p { font-size: 12px; color: var(--color-text-secondary); margin-top: 1px; }
+
+  .live-badge {
+    font-size: 11px; padding: 3px 8px; border-radius: 20px;
+    background: var(--green-light); color: var(--green-dark);
+    font-weight: 500;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .layout { display: grid; grid-template-columns: 220px 1fr; min-height: 560px; }
+
+  .sidebar {
+    background: var(--color-background-secondary);
+    border-right: 0.5px solid var(--color-border-tertiary);
+    padding: 1rem;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+
+  .sidebar-label {
+    font-size: 10px; font-weight: 500; color: var(--color-text-tertiary);
+    letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 0.5rem 0.5rem 0.25rem;
+  }
+
+  .nav-btn {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px; border-radius: var(--border-radius-md);
+    cursor: pointer; border: none; background: transparent;
+    width: 100%; text-align: left;
+    font-size: 13px; font-family: inherit;
+    color: var(--color-text-primary); transition: background 0.15s;
+  }
+  .nav-btn:hover { background: var(--color-background-primary); }
+  .nav-btn.active { background: var(--color-background-primary); font-weight: 500; }
+  .nav-btn .icon { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+
+  .stats-mini {
+    margin-top: auto; padding-top: 1rem;
+    border-top: 0.5px solid var(--color-border-tertiary);
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .stat-mini { display: flex; justify-content: space-between; align-items: center; }
+  .stat-mini-label { font-size: 12px; color: var(--color-text-secondary); }
+  .stat-mini-val { font-size: 13px; font-weight: 500; }
+
+  .main { padding: 1.5rem; overflow-y: auto; }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .section-header { margin-bottom: 1.25rem; }
+  .section-header h2 { font-size: 18px; font-weight: 500; }
+  .section-header p { font-size: 13px; color: var(--color-text-secondary); margin-top: 3px; }
+
+  .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 1.5rem; }
+  .metric-card {
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-md);
+    padding: 1rem;
+  }
+  .metric-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 4px; }
+  .metric-val { font-size: 24px; font-weight: 500; }
+  .metric-sub { font-size: 11px; margin-top: 2px; }
+
+  .card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .card-title { font-size: 14px; font-weight: 500; margin-bottom: 0.75rem; }
+
+  .input-row { display: flex; gap: 8px; margin-bottom: 1rem; }
+  .input-row input, .input-row select {
+    flex: 1; padding: 8px 12px; font-size: 13px;
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-md);
+    background: var(--color-background-secondary);
+    color: var(--color-text-primary); font-family: inherit;
+  }
+  .input-row input:focus, .input-row select:focus { outline: none; border-color: var(--blue); }
+
+  .btn {
+    padding: 8px 16px; border-radius: var(--border-radius-md);
+    border: 0.5px solid var(--color-border-secondary);
+    background: var(--color-background-primary);
+    color: var(--color-text-primary); font-size: 13px;
+    cursor: pointer; font-family: inherit; font-weight: 500;
+    white-space: nowrap; transition: background 0.15s;
+  }
+  .btn:hover { background: var(--color-background-secondary); }
+  .btn.primary { background: var(--color-text-primary); color: var(--color-background-primary); border-color: transparent; }
+  .btn.primary:hover { opacity: 0.85; }
+  .btn.danger { background: var(--red-light); color: var(--red-dark); border-color: transparent; }
+  .btn.danger:hover { opacity: 0.85; }
+  .btn.warning { background: var(--amber-light); color: var(--amber-dark); border-color: transparent; }
+
+  .list { display: flex; flex-direction: column; gap: 6px; }
+  .list-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 12px; border-radius: var(--border-radius-md);
+    background: var(--color-background-secondary);
+    font-size: 13px;
+  }
+  .list-item-left { display: flex; align-items: center; gap: 10px; }
+  .avatar {
+    width: 30px; height: 30px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 500; flex-shrink: 0;
+  }
+  .badge {
+    font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500;
+  }
+  .badge.green { background: var(--green-light); color: var(--green-dark); }
+  .badge.red { background: var(--red-light); color: var(--red-dark); }
+  .badge.blue { background: var(--blue-light); color: var(--blue-dark); }
+  .badge.amber { background: var(--amber-light); color: var(--amber-dark); }
+  .badge.teal { background: var(--teal-light); color: var(--teal-dark); }
+
+  .empty { text-align: center; padding: 2rem; color: var(--color-text-tertiary); font-size: 13px; }
+
+  .queue-flow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 0.5rem; }
+  .queue-node {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 10px; border-radius: 6px;
+    font-size: 12px;
+  }
+  .queue-arrow { color: var(--color-text-tertiary); font-size: 14px; }
+
+  .stack-visual { display: flex; flex-direction: column; gap: 4px; margin-top: 0.5rem; }
+  .stack-layer {
+    padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: 500;
+    text-align: center; position: relative;
+  }
+  .stack-top-label {
+    position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    font-size: 10px; opacity: 0.6; font-family: 'DM Mono', var(--font-mono);
+  }
+
+  .doctor-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+  .doctor-card {
+    background: var(--color-background-secondary); border-radius: var(--border-radius-md);
+    padding: 1rem; text-align: center;
+  }
+  .doc-avatar {
+    width: 48px; height: 48px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 500; margin: 0 auto 0.5rem;
+  }
+  .doc-name { font-size: 13px; font-weight: 500; }
+  .doc-spec { font-size: 11px; color: var(--color-text-secondary); margin-top: 3px; }
+  .doc-status { margin-top: 8px; }
+
+  .toast {
+    position: fixed; bottom: 20px; right: 20px;
+    padding: 10px 16px; border-radius: var(--border-radius-md);
+    font-size: 13px; font-weight: 500; font-family: 'DM Sans', var(--font-sans);
+    animation: slideIn 0.2s ease, fadeOut 0.3s ease 2.5s forwards;
+    z-index: 999; max-width: 260px;
+  }
+  @keyframes slideIn { from{transform:translateY(10px);opacity:0} to{transform:translateY(0);opacity:1} }
+  @keyframes fadeOut { from{opacity:1} to{opacity:0} }
+
+  .divider { height: 0.5px; background: var(--color-border-tertiary); margin: 1rem 0; }
+
+  .serve-btn-area { display: flex; gap: 8px; margin-top: 0.75rem; }
+</style>
+
+<div class="app">
+  <div class="header">
+    <div class="header-left">
+      <div class="logo">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 14H8v-2h4v2zm0-4H8v-2h4v2zm4-4H8V7h8v2z"/></svg>
+      </div>
+      <div>
+        <h1>MediCore HMS</h1>
+        <p>Hospital Management System</p>
+      </div>
+    </div>
+    <div class="live-badge"><div class="live-dot"></div> System Online</div>
+  </div>
+
+  <div class="layout">
+    <div class="sidebar">
+      <div class="sidebar-label">Navigation</div>
+      <button class="nav-btn active" onclick="nav('dashboard')">
+        <div class="icon" style="background:var(--blue-light);color:var(--blue)">⬛</div> Dashboard
+      </button>
+      <button class="nav-btn" onclick="nav('patients')">
+        <div class="icon" style="background:var(--teal-light);color:var(--teal)">+</div> Patients
+      </button>
+      <button class="nav-btn" onclick="nav('appointments')">
+        <div class="icon" style="background:var(--purple-light);color:var(--purple)">⏱</div> Appointments
+      </button>
+      <button class="nav-btn" onclick="nav('emergency')">
+        <div class="icon" style="background:var(--red-light);color:var(--red)">!</div> Emergency
+      </button>
+      <button class="nav-btn" onclick="nav('doctors')">
+        <div class="icon" style="background:var(--green-light);color:var(--green)">♥</div> Doctors
+      </button>
+
+      <div class="stats-mini">
+        <div class="sidebar-label" style="padding-top:0">Live Stats</div>
+        <div class="stat-mini">
+          <span class="stat-mini-label">Patients</span>
+          <span class="stat-mini-val" id="s-patients">0</span>
+        </div>
+        <div class="stat-mini">
+          <span class="stat-mini-label">Queue</span>
+          <span class="stat-mini-val" id="s-queue">0</span>
+        </div>
+        <div class="stat-mini">
+          <span class="stat-mini-label">Emergencies</span>
+          <span class="stat-mini-val" id="s-emergency" style="color:var(--red)">0</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+
+      <!-- DASHBOARD -->
+      <div class="section active" id="sec-dashboard">
+        <div class="section-header">
+          <h2>Overview</h2>
+          <p>Real-time hospital status</p>
+        </div>
+        <div class="metrics">
+          <div class="metric-card">
+            <div class="metric-label">Total Patients</div>
+            <div class="metric-val" id="m-patients" style="color:var(--teal)">0</div>
+            <div class="metric-sub" style="color:var(--color-text-tertiary)">Registered</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">In Queue</div>
+            <div class="metric-val" id="m-queue" style="color:var(--purple)">0</div>
+            <div class="metric-sub" style="color:var(--color-text-tertiary)">Waiting</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Emergencies</div>
+            <div class="metric-val" id="m-emg" style="color:var(--red)">0</div>
+            <div class="metric-sub" style="color:var(--color-text-tertiary)">Active</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Recent Activity</div>
+          <div id="activity-log" class="list">
+            <div class="empty">No activity yet. Start by adding a patient.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PATIENTS -->
+      <div class="section" id="sec-patients">
+        <div class="section-header">
+          <h2>Patient Registry</h2>
+          <p>Add and view all registered patients</p>
+        </div>
+        <div class="card">
+          <div class="card-title">Register New Patient</div>
+          <div class="input-row">
+            <input type="text" id="patient-name" placeholder="Full name" />
+            <select id="patient-condition">
+              <option value="Stable">Stable</option>
+              <option value="Moderate">Moderate</option>
+              <option value="Critical">Critical</option>
+            </select>
+            <button class="btn primary" onclick="addPatient()">Register</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Registered Patients</div>
+          <div id="patient-list" class="list"><div class="empty">No patients registered.</div></div>
+        </div>
+      </div>
+
+      <!-- APPOINTMENTS -->
+      <div class="section" id="sec-appointments">
+        <div class="section-header">
+          <h2>Appointment Queue</h2>
+          <p>FIFO queue — first in, first served</p>
+        </div>
+        <div class="card">
+          <div class="card-title">Add to Queue</div>
+          <div class="input-row">
+            <input type="text" id="appt-name" placeholder="Patient name" />
+            <select id="appt-doctor">
+              <option>Dr. Ravi</option><option>Dr. Meena</option><option>Dr. Kumar</option>
+              <option>Dr. Priya</option><option>Dr. Seth</option>
+            </select>
+            <button class="btn primary" onclick="addAppointment()">Add to Queue</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Current Queue</div>
+          <div id="queue-visual" class="queue-flow"><div class="empty" style="width:100%">Queue is empty.</div></div>
+          <div class="serve-btn-area">
+            <button class="btn" onclick="servePatient()" style="color:var(--purple-dark);background:var(--purple-light);border:none">Serve Next Patient</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Served Today</div>
+          <div id="served-list" class="list"><div class="empty">No patients served yet.</div></div>
+        </div>
+      </div>
+
+      <!-- EMERGENCY -->
+      <div class="section" id="sec-emergency">
+        <div class="section-header">
+          <h2>Emergency Stack</h2>
+          <p>LIFO stack — most recent emergency handled first</p>
+        </div>
+        <div class="card">
+          <div class="card-title">Report Emergency</div>
+          <div class="input-row">
+            <input type="text" id="emg-name" placeholder="Patient name" />
+            <select id="emg-severity">
+              <option value="High">High</option>
+              <option value="Critical">Critical</option>
+              <option value="Life-threatening">Life-threatening</option>
+            </select>
+            <button class="btn danger" onclick="addEmergency()">Report Emergency</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Emergency Stack</div>
+          <div id="stack-visual" class="stack-visual"><div class="empty">No emergencies. All clear.</div></div>
+          <div class="serve-btn-area">
+            <button class="btn warning" onclick="handleEmergency()">Handle Top Emergency</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Resolved</div>
+          <div id="resolved-list" class="list"><div class="empty">No resolved emergencies.</div></div>
+        </div>
+      </div>
+
+      <!-- DOCTORS -->
+      <div class="section" id="sec-doctors">
+        <div class="section-header">
+          <h2>Medical Staff</h2>
+          <p>Doctors on duty</p>
+        </div>
+        <div id="doctor-grid" class="doctor-grid"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  const doctors = [
+    { name: "Dr. Ravi", spec: "Cardiology", status: "Available", initials: "DR", color: "teal" },
+    { name: "Dr. Meena", spec: "Neurology", status: "In Surgery", initials: "DM", color: "purple" },
+    { name: "Dr. Kumar", spec: "Orthopedics", status: "Available", initials: "DK", color: "blue" },
+    { name: "Dr. Priya", spec: "Pediatrics", status: "Available", initials: "DP", color: "amber" },
+    { name: "Dr. Seth", spec: "Emergency", status: "On Call", initials: "DS", color: "red" },
+  ];
+
+  let patients = [];
+  let queue = [];
+  let stack = [];
+  let served = [];
+  let resolved = [];
+  let activity = [];
+
+  const colorMap = {
+    teal: ['var(--teal-light)', 'var(--teal-dark)'],
+    purple: ['var(--purple-light)', 'var(--purple-dark)'],
+    blue: ['var(--blue-light)', 'var(--blue-dark)'],
+    amber: ['var(--amber-light)', 'var(--amber-dark)'],
+    red: ['var(--red-light)', 'var(--red-dark)'],
+    green: ['var(--green-light)', 'var(--green-dark)'],
+  };
+
+  const conditionBadge = { Stable: 'green', Moderate: 'amber', Critical: 'red' };
+  const severityBadge = { High: 'amber', Critical: 'red', 'Life-threatening': 'red' };
+
+  function initials(name) {
+    return name.split(' ').map(w => w[0]?.toUpperCase() || '').join('').slice(0, 2);
+  }
+
+  function pickColor(i) {
+    const cols = ['teal', 'blue', 'purple', 'amber', 'green'];
+    return cols[i % cols.length];
+  }
+
+  function nav(section) {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    document.getElementById('sec-' + section).classList.add('active');
+  }
+
+  function toast(msg, type) {
+    const el = document.createElement('div');
+    el.className = 'toast';
+    const styles = {
+      success: ['var(--green-light)', 'var(--green-dark)'],
+      error: ['var(--red-light)', 'var(--red-dark)'],
+      info: ['var(--blue-light)', 'var(--blue-dark)'],
+      warning: ['var(--amber-light)', 'var(--amber-dark)'],
+    }[type] || ['var(--color-background-secondary)', 'var(--color-text-primary)'];
+    el.style.background = styles[0];
+    el.style.color = styles[1];
+    el.style.border = '0.5px solid ' + styles[0];
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 2900);
+  }
+
+  function logActivity(msg, type) {
+    activity.unshift({ msg, type, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
+    if (activity.length > 10) activity.pop();
+    renderActivity();
+  }
+
+  function updateStats() {
+    const qLen = queue.length;
+    const eLen = stack.length;
+    document.getElementById('s-patients').textContent = patients.length;
+    document.getElementById('s-queue').textContent = qLen;
+    document.getElementById('s-emergency').textContent = eLen;
+    document.getElementById('m-patients').textContent = patients.length;
+    document.getElementById('m-queue').textContent = qLen;
+    document.getElementById('m-emg').textContent = eLen;
+  }
+
+  function renderActivity() {
+    const el = document.getElementById('activity-log');
+    if (!activity.length) { el.innerHTML = '<div class="empty">No activity yet.</div>'; return; }
+    el.innerHTML = activity.map(a => {
+      const badgeType = a.type === 'emergency' ? 'red' : a.type === 'served' ? 'green' : a.type === 'patient' ? 'teal' : 'blue';
+      return `<div class="list-item">
+        <div class="list-item-left">
+          <span class="badge ${badgeType}">${a.type}</span>
+          <span>${a.msg}</span>
+        </div>
+        <span style="font-size:11px;color:var(--color-text-tertiary);font-family:'DM Mono'">${a.time}</span>
+      </div>`;
+    }).join('');
+  }
+
+  function addPatient() {
+    const n = document.getElementById('patient-name').value.trim();
+    const c = document.getElementById('patient-condition').value;
+    if (!n) { toast('Enter a patient name', 'error'); return; }
+    patients.push({ name: n, condition: c, id: Date.now() });
+    document.getElementById('patient-name').value = '';
+    renderPatients();
+    updateStats();
+    logActivity(`${n} registered (${c})`, 'patient');
+    toast(`${n} registered successfully`, 'success');
+  }
+
+  function renderPatients() {
+    const el = document.getElementById('patient-list');
+    if (!patients.length) { el.innerHTML = '<div class="empty">No patients registered.</div>'; return; }
+    el.innerHTML = patients.map((p, i) => {
+      const col = pickColor(i);
+      const [bg, fg] = colorMap[col];
+      return `<div class="list-item">
+        <div class="list-item-left">
+          <div class="avatar" style="background:${bg};color:${fg}">${initials(p.name)}</div>
+          <span style="font-weight:500">${p.name}</span>
+        </div>
+        <span class="badge ${conditionBadge[p.condition]}">${p.condition}</span>
+      </div>`;
+    }).join('');
+  }
+
+  function addAppointment() {
+    const n = document.getElementById('appt-name').value.trim();
+    const d = document.getElementById('appt-doctor').value;
+    if (!n) { toast('Enter a patient name', 'error'); return; }
+    queue.push({ name: n, doctor: d });
+    document.getElementById('appt-name').value = '';
+    renderQueue();
+    updateStats();
+    logActivity(`${n} added to queue (${d})`, 'queue');
+    toast(`${n} added to appointment queue`, 'info');
+  }
+
+  function renderQueue() {
+    const el = document.getElementById('queue-visual');
+    if (!queue.length) { el.innerHTML = '<div class="empty" style="width:100%">Queue is empty.</div>'; return; }
+    el.innerHTML = queue.map((q, i) => {
+      const isFirst = i === 0;
+      return `<div style="display:flex;align-items:center;gap:6px">
+        <div class="queue-node" style="background:${isFirst ? 'var(--purple-light)' : 'var(--color-background-secondary)'};color:${isFirst ? 'var(--purple-dark)' : 'var(--color-text-primary)'}">
+          <span style="font-weight:500">${q.name}</span>
+          <span style="font-size:10px;opacity:0.7">→ ${q.doctor}</span>
+        </div>
+        ${i < queue.length - 1 ? '<span class="queue-arrow">›</span>' : ''}
+      </div>`;
+    }).join('');
+  }
+
+  function servePatient() {
+    if (!queue.length) { toast('No patients in queue', 'error'); return; }
+    const p = queue.shift();
+    served.push(p);
+    renderQueue();
+    renderServed();
+    updateStats();
+    logActivity(`${p.name} served by ${p.doctor}`, 'served');
+    toast(`Now serving: ${p.name}`, 'success');
+  }
+
+  function renderServed() {
+    const el = document.getElementById('served-list');
+    if (!served.length) { el.innerHTML = '<div class="empty">No patients served yet.</div>'; return; }
+    el.innerHTML = served.slice().reverse().map((s, i) => `
+      <div class="list-item">
+        <div class="list-item-left">
+          <span>${s.name}</span>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <span style="font-size:12px;color:var(--color-text-secondary)">${s.doctor}</span>
+          <span class="badge green">Served</span>
+        </div>
+      </div>`).join('');
+  }
+
+  function addEmergency() {
+    const n = document.getElementById('emg-name').value.trim();
+    const s = document.getElementById('emg-severity').value;
+    if (!n) { toast('Enter a patient name', 'error'); return; }
+    stack.push({ name: n, severity: s });
+    document.getElementById('emg-name').value = '';
+    renderStack();
+    updateStats();
+    logActivity(`Emergency: ${n} (${s})`, 'emergency');
+    toast(`Emergency reported: ${n}`, 'warning');
+  }
+
+  function renderStack() {
+    const el = document.getElementById('stack-visual');
+    if (!stack.length) { el.innerHTML = '<div class="empty">No emergencies. All clear.</div>'; return; }
+    el.innerHTML = [...stack].reverse().map((s, i) => {
+      const isTop = i === 0;
+      const bg = s.severity === 'Life-threatening' ? 'var(--red-light)' : s.severity === 'Critical' ? 'var(--amber-light)' : 'var(--color-background-secondary)';
+      const fg = s.severity === 'Life-threatening' ? 'var(--red-dark)' : s.severity === 'Critical' ? 'var(--amber-dark)' : 'var(--color-text-primary)';
+      return `<div class="stack-layer" style="background:${bg};color:${fg}">
+        ${s.name} — ${s.severity}
+        ${isTop ? '<span class="stack-top-label">← TOP</span>' : ''}
+      </div>`;
+    }).join('');
+  }
+
+  function handleEmergency() {
+    if (!stack.length) { toast('No emergencies to handle', 'error'); return; }
+    const p = stack.pop();
+    resolved.push(p);
+    renderStack();
+    renderResolved();
+    updateStats();
+    logActivity(`${p.name} emergency resolved`, 'served');
+    toast(`Handling: ${p.name} (${p.severity})`, 'success');
+  }
+
+  function renderResolved() {
+    const el = document.getElementById('resolved-list');
+    if (!resolved.length) { el.innerHTML = '<div class="empty">No resolved emergencies.</div>'; return; }
+    el.innerHTML = resolved.slice().reverse().map(r => `
+      <div class="list-item">
+        <div class="list-item-left"><span>${r.name}</span></div>
+        <span class="badge ${severityBadge[r.severity]}">${r.severity} — Resolved</span>
+      </div>`).join('');
+  }
+
+  function renderDoctors() {
+    const el = document.getElementById('doctor-grid');
+    const statusBadge = { Available: 'green', 'In Surgery': 'red', 'On Call': 'amber' };
+    el.innerHTML = doctors.map(d => {
+      const [bg, fg] = colorMap[d.color];
+      return `<div class="doctor-card">
+        <div class="doc-avatar" style="background:${bg};color:${fg}">${d.initials}</div>
+        <div class="doc-name">${d.name}</div>
+        <div class="doc-spec">${d.spec}</div>
+        <div class="doc-status"><span class="badge ${statusBadge[d.status]}">${d.status}</span></div>
+      </div>`;
+    }).join('');
+  }
+
+  renderDoctors();
+  updateStats();
+</script>
